@@ -1,0 +1,170 @@
+html, body 
+{
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+* 
+{
+    font-family:'Trebuchet MS';
+}
+
+.wrapper
+{
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+header 
+{
+    height: 50px;
+    width: 100%;
+
+    background-color: dodgerblue;
+    border-bottom: 5px dotted black;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo
+{
+    font-size: 28px;
+    color: white;
+}
+
+main 
+{
+    flex: 1 1 auto;
+}
+
+footer 
+{
+    height: 50px;
+    width: 100%;
+
+    background-color: #105090;
+    border-top: 5px dotted black;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer-information
+{
+    margin: 10px;
+
+    font-size: 14px;
+    color: white;
+}
+
+.navigation-bar
+{
+    height: 30px;
+    width: 100%;
+
+    background-color: #61a1e1;
+    border-top: 3px solid black;
+    border-bottom: 3px solid black;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navigation-bar .item 
+{
+    height: 24px;
+    min-width: 40px;
+    margin-left: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+
+    transform: skew(-15deg);
+    background-color: #eaf5ff;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    text-decoration: none;
+    color: black;
+}
+
+.item:hover { background-color: #c3cece; }
+
+.navigation-bar .item .label
+{
+    font-size: 18px;
+    color: black;
+}
+
+.drop-button 
+{
+    height: 24px;
+    min-width: 40px;
+    margin-left: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+
+    transform: skew(-15deg);
+
+    background-color: azure;
+
+    font-size: 18px;
+    color: black;
+    border: none;
+}
+  
+.dropdown 
+{
+    position: relative;
+    display: inline-block;
+
+    margin: 5px;
+}
+  
+.dropdown-content 
+{
+    display: none;
+    position: absolute;
+    background-color: none;
+    min-width: 40px;
+    z-index: 1;
+}
+  
+.dropdown-content a 
+{
+    transform: skew(-15deg);
+    padding: 12px;
+    min-width: 100%;
+    
+    background-color: #f1f1f1;
+    color: black;
+    text-decoration: none;
+    display: block;
+
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+
+    font-size: 15px;
+    color: black;
+}
+
+.dropdown-content a:hover { background-color: #ddd; }
+ 
+.dropdown:hover .dropdown-content { display: block; }
+  
+.dropdown:hover .drop-button { background-color: #c3cece; }
+
+.in-center
+{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
