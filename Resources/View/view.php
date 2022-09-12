@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title><?= Config\TITLE ?></title>
-        <link rel="stylesheet" href="/Resources/Css/styles.css">
+        <link rel="stylesheet" href= <?=Css("styles")?>>
     </head>
     <body>
         <div class="wrapper">
