@@ -3,12 +3,12 @@
 namespace Pages;
 
 use View\View;
-use const Config\VIEW;
+use const View\DEFAULT_VIEW;
 
 class ArchivePage extends Page 
 {
     public function index()
     {
-        View::Render(VIEW, Page("archive"));
+        View::Render(DEFAULT_VIEW, Page("archive"));
     }
 }

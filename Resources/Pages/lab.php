@@ -1,14 +1,16 @@
 <div class="in-center">Test Lab</div>
 
+<div class="in-center">
 <?php
 
-use Fabrics\DefaultFabric;
+    use DataBase\DataBaseConnector;
+    use DataBase\NavigationTable;
+    use DataBase\QueryGenerator;
 
-$fabric = new DefaultFabric();
+    $table = new NavigationTable(DataBaseConnector::Default());
 
-$fabric->Button("Da");
-    
+    $query = (new QueryGenerator)->Select(["Id"])->From("navigation")->Result();
+
+    Dump($table->Execute($query));
 ?>
-
-    
-</form>
+</div>

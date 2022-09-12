@@ -7,14 +7,14 @@
     </head>
     <body>
         <div class="wrapper">
-            <?php require_once Config\HEADER?>
-            <?php require_once Config\NAVIGATION?>
+            <?php require_once View\HEADER?>
+            <?php require_once View\NAVIGATION?>
 
             <main>
                 <?php require_once $page ?>
             </main>
             
-            <?php require_once Config\FOOTER?>
+            <?php require_once View\FOOTER?>
         </div>
     </body>
 </html>

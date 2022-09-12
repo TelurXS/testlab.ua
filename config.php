@@ -18,9 +18,9 @@ require_once "Source/Utils/ClassLoader.php";
 const DIRECTIRIES = 
 [
     "",
+    "Utils/",
     "DataBase/",
     "DataBase/Tables/",
-    "Utils/",
     "Core/",
     "Core/Pages/",
     "View/",
@@ -28,11 +28,5 @@ const DIRECTIRIES =
 ];
 
 ClassLoader::IncludeDirectories(DIRECTIRIES);
-
-const HEADER = "Resources/View/header.php";
-const NAVIGATION = "Resources/View/navigation.php";
-const FOOTER = "Resources/View/footer.php";
-const VIEW = "Resources/View/view.php";
-
 
 ?>

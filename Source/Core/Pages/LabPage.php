@@ -3,17 +3,17 @@
 namespace Pages;
 
 use View\View;
-use const Config\VIEW;
+use const View\DEFAULT_VIEW;
 
 class LabPage extends Page 
 {
     public function index()
     {
-        View::Render(VIEW, Page("lab"));
+        View::Render(DEFAULT_VIEW, Page("lab"));
     }
 
-    public function RecieveValues()
+    public function form()
     {
-        View::Render(VIEW, Page("lab"));
+        View::Render(DEFAULT_VIEW, Page("empty"));
     }
 }

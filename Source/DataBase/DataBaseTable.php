@@ -4,21 +4,24 @@ namespace DataBase;
 
 use PDO;
 use Exception;
+
 use const Config\DB_NAME;
+
+const ID = "Id";
 
 class DataBaseTable
 {
     protected $_handler;
     protected $_name;
 
-    public function __construct($name, $connection)
+    public function __construct(string $name, PDO $connection)
     {
         $this->_handler = $connection;
 
         $this->SetTableName($name);
     }
 
-    public function SetTableName($value)
+    public function SetTableName(string $value)
     {
         if ($this->IsTableExists($value))
         {
@@ -27,9 +30,12 @@ class DataBaseTable
         else throw new Exception("Table $this->_name is not exists");
     }
 
-    public function IsTableExists($name)
+    public function IsTableExists(string $name)
     {
-        $query = "SELECT TABLE_NAME AS `table` FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '".DB_NAME."'";
+        $query = (new QueryGenerator)->
+            Select(["!`TABLE_NAME` AS `table`"])->
+            From("!INFORMATION_SCHEMA.TABLES")->
+            Where(["TABLE_SCHEMA"=>DB_NAME])->Result();
 
         $tables = $this->ExecuteAndFetch($query);
 
@@ -44,129 +50,82 @@ class DataBaseTable
         return false;
     }
 
-    public function GetId($filter = [])
+    public function GetId(array $filter = []) : int
     {
-        $query = $this->GenerateQuery("SELECT Id FROM ".$this->_name.
-                                $this->TryInsertWhere($filter), 
-                                $filter, "[key]=[value]", " AND ", " LIMIT 1");
+        $query = (new QueryGenerator)->
+            Select([ID])->From($this->_name)->
+            Where($filter)->Limit(1)->Result();
 
-        return intval($this->ExecuteAndFetch($query)[0]["Id"]);
+        return intval($this->ExecuteAndFetch($query)[0][ID]);
     }
 
-    public function GetRow($id)
+    public function GetRow(int $id) : array
     {
-        $query = "SELECT * FROM ".$this->_name." WHERE Id = $id";
+        $query = (new QueryGenerator)->
+            Select()->From($this->_name)->
+            Where([ID => $id])->Limit(1)->Result();
+
         return $this->ExecuteAndFetch($query);
     }
 
-    public function GetRows($filter = [], $orderBy = "Id", $count = 100, $offset = 0)
-    {
-        $query = $this->GenerateQuery("SELECT * FROM ".$this->_name. 
-                            $this->TryInsertWhere($filter), 
-                            $filter, "[key]=[value]", " AND ", 
-                            " ORDER BY $orderBy LIMIT $count OFFSET $offset");
-                            
+    public function GetRows(array $filter = [], string $orderBy = ID, int $count = 100, int $offset = 0) : array
+    {                 
+        $query = (new QueryGenerator)->
+            Select()->From($this->_name)->Where($filter)->
+            OrderBy($orderBy)->Limit($count)->
+            Offset($offset)->Result();
+
+        
         return $this->ExecuteAndFetch($query);
     }
 
-    public function Insert($data = [])
+    public function Insert(array $data = []) : int
     {
-        $query = "INSERT INTO ".$this->_name."(";
-        $query .= $this->GenerateFilter($data, "[key]", ", ");
-        $query .= ") VALUES(";
-        $query .= $this->GenerateFilter($data, "[value]", ", ");
-        $query.= ")";
+        $query = (new QueryGenerator)->
+            Insert($this->_name, $data)->Values($data)->Result();
         
         return $this->Execute($query);
     }
 
-    public function Update($id, $data = [])
+    public function Update(int $id, array $data = []) : int
     {
-        $query = $this->GenerateQuery("UPDATE ".$this->_name." SET",
-                        $data, "[key]=[value]", ", ", " WHERE Id = $id");
+        $query = (new QueryGenerator)->
+            Update($this->_name)->Set($data)->
+            Where([ID=>$id])->Result();
 
         return $this->Execute($query);
     }
 
-    public function Delete($id)
+    public function Delete(int $id) : int
     {
-        $query = "DELETE FROM ".$this->_name." WHERE Id = $id";
+        $query = (new QueryGenerator)->
+            Delete()->From($this->_name)->
+            Where([ID=>$id])->Result();
+
         return $this->Execute($query);
     }
 
-    public function GetRowsCount($filter = [])
+    public function GetRowsCount(array $filter = []) : int
     {
-        $query = $this->GenerateQuery("SELECT COUNT(*) as count FROM ".$this->_name.
-                        $this->TryInsertWhere($filter),
-                        $filter, "[key]=[value]", ", ", "");
+        $query = (new QueryGenerator)->
+            Select(["!COUNT(*) as count"])->From($this->_name)->
+            Where($filter)->Result();
 
         return intval($this->ExecuteAndFetch($query)[0]["count"]);
     }
 
-    public function Execute($query)
+    public function Execute(string $query) : int
     {
         $sth = $this->_handler->prepare($query);
         $sth->execute();
         return $sth->rowCount();
     }
 
-    public function ExecuteAndFetch($query)
+    public function ExecuteAndFetch(string $query) : array
     {
         $sth = $this->_handler->query($query);
         $sth->execute();
         return $sth->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    protected function GenerateQuery($base, $filter, $patern, $separator, $end)
-    {
-        $query = $base." ";
-        $query .= $this->GenerateFilter($filter, $patern, $separator);
-        $query .= $end;
-        return $query;
-    }
-
-    protected function GenerateFilter($filter = [], $patern, $separator)
-    {
-        if(count($filter) == 0) return "";
-
-        $result = "";
-
-        $counter = 1;
-        foreach ($filter as $key => $value) 
-        {
-            $replaced = str_replace(["[key]", "[value]"], [$this->GenerateKey($key), $this->GenerateValue($value) ], $patern);
-
-            $result .= $replaced;
-
-            if ($counter != count($filter))
-            {
-                $result .= $separator;
-                $counter++;
-            }
-        }
-
-        return $result;
-    }
-
-    protected function GenerateValue($value)
-    {
-        switch (gettype($value)) 
-        {
-            case gettype("0"): return "'$value'";
-            case gettype(0): return $value;
-            case gettype(NULL): return "null";
-            default: return $value;
-        }
-    }
-
-    protected function GenerateKey($key)
-    {
-        return "`$key`";
-    }
-
-    protected function TryInsertWhere($filter)
-    {
-        return (count($filter) > 0 ? " WHERE" : "");
     }
 }
 

@@ -9,3 +9,9 @@ class View
         require $view;
     }
 }
+
+const HEADER = "Resources/View/header.php";
+const NAVIGATION = "Resources/View/navigation.php";
+const FOOTER = "Resources/View/footer.php";
+
+const DEFAULT_VIEW = "Resources/View/view.php";

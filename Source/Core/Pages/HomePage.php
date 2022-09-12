@@ -3,12 +3,12 @@
 namespace Pages;
 
 use View\View;
-use const Config\VIEW;
+use const View\DEFAULT_VIEW;
 
 class HomePage extends Page 
 {
     public function index()
     {
-        View::Render(VIEW, Page("main"));
+        View::Render(DEFAULT_VIEW, Page("main"));
     }
 }
